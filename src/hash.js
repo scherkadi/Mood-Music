@@ -4,9 +4,12 @@ const hash = window.location.hash
     .split('&')
     .reduce(function (initial, item) {
         if (item) {
-            var parts = item.split('=');
+            let parts = item.split('=');
             initial[parts[0]] = decodeURIComponent(parts[1]);
         }
+        // console.log(initial);
         return initial;
     }, {});
 window.location.hash = '';
+
+export default hash;

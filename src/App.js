@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import hash from './hash';
 import { authEndpoint, clientID, redirectURI, scopes } from "./user-config";
 import './App.css';
@@ -10,25 +9,25 @@ class App extends Component {
     this.state = {
       token: "",
       deviceId: "",
-      loggedIn: false,
       error: "",
       trackName: "Track Name",
       artistName: "Artist Name",
       albumName: "Album Name",
       playing: false,
-      position: 0,
-      duration: 0,
       albumArt: "",
       uri: "spotify:playlist:6M4ZbVjkSE6P3IhbeYbnhc",
     };
     this.playerCheckInterval = null;
   }
 
-  handleLogin() {
-    if (this.state.token !== "") {
-      this.setState({ loggedIn: true });
-
+  componentDidMount() {
+    let _token = hash.access_token;
+    if (_token) {
+      this.setState({
+        token: _token
+      });
       this.playerCheckInterval = setInterval(() => this.checkForPlayer(), 1000);
+      console.log(this.state.token);
     }
   }
 
@@ -44,24 +43,18 @@ class App extends Component {
       });
       this.createEventHandlers();
 
-      // finally, connect!
       this.player.connect();
     }
   }
 
   createEventHandlers() {
     this.player.on('initialization_error', e => { console.error(e); });
-    this.player.on('authentication_error', e => {
-      console.error(e);
-      this.setState({ loggedIn: false });
-    });
+    this.player.on('authentication_error', e => {console.error(e);});
     this.player.on('account_error', e => { console.error(e); });
     this.player.on('playback_error', e => { console.error(e); });
 
-    // Playback status updates
     this.player.on('player_state_changed', state => this.onStateChanged(state));
 
-    // Ready
     this.player.on('ready', async data => {
       let { device_id } = data;
       console.log("Let the music play on!");
@@ -74,8 +67,6 @@ class App extends Component {
     if (state !== null) {
       const {
         current_track: currentTrack,
-        position,
-        duration,
       } = state.track_window;
       const trackName = currentTrack.name;
       const albumName = currentTrack.album.name;
@@ -85,8 +76,6 @@ class App extends Component {
           .join(", ");
       const playing = !state.paused;
       this.setState({
-        position,
-        duration,
         trackName,
         albumName,
         artistName,
@@ -108,21 +97,6 @@ class App extends Component {
     this.player.nextTrack();
   }
 
-  // transferPlaybackHere() {
-  //   const { deviceId, token } = this.state;
-  //   fetch("https://api.spotify.com/v1/me/player", {
-  //     method: "PUT",
-  //     headers: {
-  //       authorization: `Bearer ${token}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       "device_ids": [ deviceId ],
-  //       "play": true,
-  //     }),
-  //   });
-  // }
-
   transferPlaybackHere() {
     const { deviceId, token, uri} = this.state;
     fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
@@ -138,7 +112,6 @@ class App extends Component {
   render() {
     const {
       token,
-      loggedIn,
       error,
       trackName,
       artistName,
@@ -151,10 +124,10 @@ class App extends Component {
         <div className="App">
           {error && <p>You have an error! : {error}</p> }
 
-          {loggedIn ? (<div>
+          {token ? (<div>
             <div className="App-header" id="loggedIn">
               <h2>Now Playing</h2>
-              <img src={albumArt} />
+              <img alt={"Album Cover"} src={albumArt} />
             </div>
             <div className="Artist-info">
             <p>Artist: {artistName}</p>
@@ -167,19 +140,17 @@ class App extends Component {
             </p>
           </div></div>) : (<div>
             <div className="App-header">
-              <h2>Authentication</h2>
+            <h2>Authentication</h2>
             </div>
             <div className="Token-info">
-            <p>
-              Enter your Spotify access token.
-            </p>
-            <p>
-              <input type="text" value={token} onChange={e => this.setState({ token: e.target.value })} />
-            </p>
-            <p>
-              <button onClick={() => this.handleLogin()}>GO!</button>
-            </p>
-          </div></div>)}
+            <a
+            className="btn btn--loginApp-link"
+            href={`${authEndpoint}client_id=${clientID}&redirect_uri=${redirectURI}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
+            >
+            Login to Spotify
+            </a>
+            </div></div>)}
+
         </div>
 
     );
