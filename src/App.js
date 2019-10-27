@@ -16,6 +16,7 @@ class App extends Component {
       playing: false,
       albumArt: "",
       uri: "spotify:playlist:6M4ZbVjkSE6P3IhbeYbnhc",
+      mood: "",
     };
     this.playerCheckInterval = null;
   }
@@ -118,6 +119,7 @@ class App extends Component {
       albumName,
       playing,
       albumArt,
+      mood,
     } = this.state;
 
     return (
@@ -126,7 +128,8 @@ class App extends Component {
           <div className="Web-header">
             Mood Music
           </div>
-          {token ? (<div>
+          {/*{!mood && (<div>hi</div>)}*/}
+          {(token) && (<div>
             <div className="App-header" id="loggedIn">
               <h2>Now Playing</h2>
               <img className="album" alt={"Album Cover"} src={albumArt} />
@@ -142,7 +145,9 @@ class App extends Component {
               <div className={"divider"}/>
               <button onClick={() => this.onNextClick()}>Next</button>
             </p>
-          </div></div>) : (<div>
+          </div></div>)}
+
+          {(!token) && (<div>
             <div className="App-header">
             <h2>Authentication</h2>
             </div>
