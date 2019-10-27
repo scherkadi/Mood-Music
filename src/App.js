@@ -123,11 +123,13 @@ class App extends Component {
     return (
         <div className="App">
           {error && <p>You have an error! : {error}</p> }
-
+          <div className="Web-header">
+            Mood Music
+          </div>
           {token ? (<div>
             <div className="App-header" id="loggedIn">
               <h2>Now Playing</h2>
-              <img alt={"Album Cover"} src={albumArt} />
+              <img className="album" alt={"Album Cover"} src={albumArt} />
             </div>
             <div className="Artist-info">
             <p>Artist: {artistName}</p>
@@ -135,7 +137,9 @@ class App extends Component {
             <p>Album: {albumName}</p>
             <p>
               <button onClick={() => this.onPrevClick()}>Previous</button>
+              <div className={"divider"}/>
               <button onClick={() => this.onPlayClick()}>{playing ? "Pause" : "Play"}</button>
+              <div className={"divider"}/>
               <button onClick={() => this.onNextClick()}>Next</button>
             </p>
           </div></div>) : (<div>
@@ -144,13 +148,12 @@ class App extends Component {
             </div>
             <div className="Token-info">
             <a
-            className="btn btn--loginApp-link"
+            className="login"
             href={`${authEndpoint}client_id=${clientID}&redirect_uri=${redirectURI}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
             >
-            Login to Spotify
+            Login to Spotify!
             </a>
             </div></div>)}
-
         </div>
 
     );
