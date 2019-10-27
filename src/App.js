@@ -10,12 +10,11 @@ class App extends Component {
       token: "",
       deviceId: "",
       error: "",
-      trackName: "Track Name",
-      artistName: "Artist Name",
-      albumName: "Album Name",
+      trackName: "Loading...",
+      artistName: "Loading...",
+      albumName: "Loading...",
       playing: false,
       albumArt: "",
-      uri: "spotify:playlist:6M4ZbVjkSE6P3IhbeYbnhc",
       mood: "",
     };
     this.playerCheckInterval = null;
@@ -58,7 +57,6 @@ class App extends Component {
 
     this.player.on('ready', async data => {
       let { device_id } = data;
-      console.log("Let the music play on!");
       await this.setState({ deviceId: device_id });
       this.transferPlaybackHere()
     });
@@ -112,11 +110,11 @@ class App extends Component {
 
   handleChange(event) {
     if (event.target.value === "HAPPY :)") {
-      this.setState({mood: "spotify:playlist:6M4ZbVjkSE6P3IhbeYbnhc"});
+      this.setState({mood: "spotify:playlist:37i9dQZF1DXdPec7aLTmlC"}); //Happy Hits Playlist
     } else if (event.target.value === "SAD :(") {
-      this.setState({mood: "spotify:playlist:6vbetH32Fk2oRjeznWkKtx"});
+      this.setState({mood: "spotify:playlist:37i9dQZF1DX3YSRoSdA634"}); //Life Sucks Playlist
     } else {
-      this.setState({mood: "spotify:playlist:7L08IETH8EQmm7k4r8rivb"});
+      this.setState({mood: "spotify:playlist:37i9dQZF1DX3ND264N08pv"}); //Rage Beats Playlist
     }
   }
 
@@ -140,15 +138,15 @@ class App extends Component {
           </div>
           {(!mood && token) && (
               <form>
-                <div><br/>Pick a mood</div><br/>
-                <input type="button" name={"mood"} value={"HAPPY :)"} onClick={this.handleChange}/><br/><br/>
-                <input type="button" name={"mood"} value={"SAD :("} onClick={this.handleChange}/><br/><br/>
-                <input type="button" name={"mood"} value={"ANGRY X("} onClick={this.handleChange}/>
+                <div className={"label"}><br/>Pick a mood</div><br/>
+                <input type="button" className={"mood"} value={"HAPPY :)"} onClick={this.handleChange}/><br/><br/>
+                <input type="button" className={"mood"} value={"SAD :("} onClick={this.handleChange}/><br/><br/>
+                <input type="button" className={"mood"} value={"ANGRY X("} onClick={this.handleChange}/>
           </form>)}
           {(mood && token) && (<div>
             <div className="App-header" id="loggedIn">
               <h2>Now Playing</h2>
-              <img className="album" alt={"Album Cover"} src={albumArt} />
+              <img className="album" alt={"Loading Album Cover..."} src={albumArt} />
             </div>
             <div className="Artist-info">
             <p>Artist: {artistName}</p>
