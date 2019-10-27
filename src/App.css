@@ -1,13 +1,44 @@
 .App {
   text-align: center;
+  background-color: #461831;
+  color: white;
+  font-family: 'Asap', sans-serif;
 }
 
 .App-logo {
   height: 40vmin;
 }
 
+.Web-header {
+  background-image: url("sunset.jpg");
+  min-height: 20vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  border-bottom: 10px;
+  border-bottom-color: black;
+}
+
+.login {
+  background-color: transparent;
+  border-radius: 10px;
+  border: 2px solid white;
+  color: white;
+  cursor: pointer;
+  font-size: calc(10px + 2vmin);
+  padding: 0.5em 1.5em;
+  transition: all 0.5s ease;
+}
+
+.album {
+  border-radius: 30px;
+}
+
 .App-header {
-  background-color: #282c34;
+  background-color: #461831;
   min-height: 10vh;
   display: flex;
   flex-direction: column;
@@ -18,10 +49,28 @@
 }
 
 #loggedIn {
-  padding-bottom: 50px;
+  padding-bottom: 30px;
+}
+
+button {
+  background-color: white;
+  border: none;
+  border-radius: 10px;
+  color: #461831;
+  padding: 15px 15px 15px 15px;
+  text-align: center;
+  display: inline-block;
+  font-size: 20px;
+}
+
+.divider{
+  width:10px;
+  height:auto;
+  display:inline-block;
 }
 
 .Artist-info {
+  font-size: 30px;
   padding-top: 20px;
 }
 
@@ -29,5 +78,5 @@
   padding-top: 20px;
 }
 .App-link {
-  color: #09d3ac;
+  color: white;
 }
