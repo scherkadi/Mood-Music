@@ -34,9 +34,8 @@ class App extends Component {
   }
 
   checkForPlayer() {
-    const { token } = this.state;
-
-    if (window.Spotify !== null) {
+    const { token, mood } = this.state;
+    if (window.Spotify !== null && mood) {
       clearInterval(this.playerCheckInterval);
 
       this.player = new window.Spotify.Player({
@@ -100,21 +99,26 @@ class App extends Component {
   }
 
   transferPlaybackHere() {
-    const { deviceId, token, uri} = this.state;
+    const { deviceId, token, mood} = this.state;
     fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
       method: "PUT",
       headers: {
         authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ "context_uri": uri}),
+      body: JSON.stringify({ "context_uri": mood}),
     });
   }
 
   handleChange(event) {
-    this.setState({mood: event.target.value});
+    if (event.target.value === "HAPPY :)") {
+      this.setState({mood: "spotify:playlist:6M4ZbVjkSE6P3IhbeYbnhc"});
+    } else if (event.target.value === "SAD :(") {
+      this.setState({mood: "spotify:playlist:6vbetH32Fk2oRjeznWkKtx"});
+    } else {
+      this.setState({mood: "spotify:playlist:7L08IETH8EQmm7k4r8rivb"});
+    }
   }
-
 
   render() {
     const {
@@ -135,12 +139,12 @@ class App extends Component {
             Mood Music
           </div>
           {(!mood && token) && (
-              <div>
-                <div>Pick a mood</div>
-                <input type="radio" name={"mood"} value={"H"} onChange={this.handleChange}/>Happy<br/>
-                <input type="radio" name={"mood"} value={"S"} onChange={this.handleChange}/>Sad<br/>
-                <input type="radio" name={"mood"} value={"A"} onChange={this.handleChange}/>Angry
-          </div>)}
+              <form>
+                <div><br/>Pick a mood</div><br/>
+                <input type="button" name={"mood"} value={"HAPPY :)"} onClick={this.handleChange}/><br/><br/>
+                <input type="button" name={"mood"} value={"SAD :("} onClick={this.handleChange}/><br/><br/>
+                <input type="button" name={"mood"} value={"ANGRY X("} onClick={this.handleChange}/>
+          </form>)}
           {(mood && token) && (<div>
             <div className="App-header" id="loggedIn">
               <h2>Now Playing</h2>
@@ -150,13 +154,13 @@ class App extends Component {
             <p>Artist: {artistName}</p>
             <p>Track: {trackName}</p>
             <p>Album: {albumName}</p>
-            <p>
+            <div>
               <button onClick={() => this.onPrevClick()}>Previous</button>
               <div className={"divider"}/>
               <button onClick={() => this.onPlayClick()}>{playing ? "Pause" : "Play"}</button>
               <div className={"divider"}/>
               <button onClick={() => this.onNextClick()}>Next</button>
-            </p>
+            </div>
           </div></div>)}
 
           {(!token) && (<div>
