@@ -19,6 +19,7 @@ class App extends Component {
       mood: "",
     };
     this.playerCheckInterval = null;
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -110,6 +111,11 @@ class App extends Component {
     });
   }
 
+  handleChange(event) {
+    this.setState({mood: event.target.value});
+  }
+
+
   render() {
     const {
       token,
@@ -128,8 +134,14 @@ class App extends Component {
           <div className="Web-header">
             Mood Music
           </div>
-          {/*{!mood && (<div>hi</div>)}*/}
-          {(token) && (<div>
+          {(!mood && token) && (
+              <div>
+                <div>Pick a mood</div>
+                <input type="radio" name={"mood"} value={"H"} onChange={this.handleChange}/>Happy<br/>
+                <input type="radio" name={"mood"} value={"S"} onChange={this.handleChange}/>Sad<br/>
+                <input type="radio" name={"mood"} value={"A"} onChange={this.handleChange}/>Angry
+          </div>)}
+          {(mood && token) && (<div>
             <div className="App-header" id="loggedIn">
               <h2>Now Playing</h2>
               <img className="album" alt={"Album Cover"} src={albumArt} />
