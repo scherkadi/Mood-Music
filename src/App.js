@@ -10,14 +10,15 @@ class App extends Component {
       token: "",
       deviceId: "",
       error: "",
-      trackName: "Track Name",
-      artistName: "Artist Name",
-      albumName: "Album Name",
+      trackName: "Loading...",
+      artistName: "Loading...",
+      albumName: "Loading...",
       playing: false,
       albumArt: "",
-      uri: "spotify:playlist:6M4ZbVjkSE6P3IhbeYbnhc",
+      mood: "",
     };
     this.playerCheckInterval = null;
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -32,9 +33,8 @@ class App extends Component {
   }
 
   checkForPlayer() {
-    const { token } = this.state;
-
-    if (window.Spotify !== null) {
+    const { token, mood } = this.state;
+    if (window.Spotify !== null && mood) {
       clearInterval(this.playerCheckInterval);
 
       this.player = new window.Spotify.Player({
@@ -57,7 +57,6 @@ class App extends Component {
 
     this.player.on('ready', async data => {
       let { device_id } = data;
-      console.log("Let the music play on!");
       await this.setState({ deviceId: device_id });
       this.transferPlaybackHere()
     });
@@ -98,15 +97,25 @@ class App extends Component {
   }
 
   transferPlaybackHere() {
-    const { deviceId, token, uri} = this.state;
+    const { deviceId, token, mood} = this.state;
     fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
       method: "PUT",
       headers: {
         authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ "context_uri": uri}),
+      body: JSON.stringify({ "context_uri": mood}),
     });
+  }
+
+  handleChange(event) {
+    if (event.target.value === "HAPPY :)") {
+      this.setState({mood: "spotify:playlist:37i9dQZF1DXdPec7aLTmlC"}); //Happy Hits Playlist
+    } else if (event.target.value === "SAD :(") {
+      this.setState({mood: "spotify:playlist:37i9dQZF1DX3YSRoSdA634"}); //Life Sucks Playlist
+    } else {
+      this.setState({mood: "spotify:playlist:37i9dQZF1DX3ND264N08pv"}); //Rage Beats Playlist
+    }
   }
 
   render() {
@@ -118,6 +127,7 @@ class App extends Component {
       albumName,
       playing,
       albumArt,
+      mood,
     } = this.state;
 
     return (
@@ -126,23 +136,32 @@ class App extends Component {
           <div className="Web-header">
             Mood Music
           </div>
-          {token ? (<div>
+          {(!mood && token) && (
+              <form>
+                <div className={"label"}><br/>Pick a mood</div><br/>
+                <input type="button" className={"mood"} value={"HAPPY :)"} onClick={this.handleChange}/><br/><br/>
+                <input type="button" className={"mood"} value={"SAD :("} onClick={this.handleChange}/><br/><br/>
+                <input type="button" className={"mood"} value={"ANGRY X("} onClick={this.handleChange}/>
+          </form>)}
+          {(mood && token) && (<div>
             <div className="App-header" id="loggedIn">
               <h2>Now Playing</h2>
-              <img className="album" alt={"Album Cover"} src={albumArt} />
+              <img className="album" alt={"Loading Album Cover..."} src={albumArt} />
             </div>
             <div className="Artist-info">
             <p>Artist: {artistName}</p>
             <p>Track: {trackName}</p>
             <p>Album: {albumName}</p>
-            <p>
+            <div>
               <button onClick={() => this.onPrevClick()}>Previous</button>
               <div className={"divider"}/>
               <button onClick={() => this.onPlayClick()}>{playing ? "Pause" : "Play"}</button>
               <div className={"divider"}/>
               <button onClick={() => this.onNextClick()}>Next</button>
-            </p>
-          </div></div>) : (<div>
+            </div>
+          </div></div>)}
+
+          {(!token) && (<div>
             <div className="App-header">
             <h2>Authentication</h2>
             </div>
